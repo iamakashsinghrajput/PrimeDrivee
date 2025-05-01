@@ -3,6 +3,11 @@ import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import bcrypt from "bcrypt";
 import mongoose from 'mongoose';
+import { sendOtpEmail } from "@/lib/nodemailer"; // Import sendOtpEmail for OTP email sending
+
+const generateOtp = (length: number = 6): string => {
+  return Math.floor(Math.random() * (10**length - 10**(length-1)) + 10**(length-1)).toString();
+};
 
 export async function POST(request: Request) {
     try {
@@ -40,7 +45,6 @@ export async function POST(request: Request) {
             dateOfBirth = parsedDate;
         }
 
-
         await User.create({
             name,
             email,
@@ -50,7 +54,24 @@ export async function POST(request: Request) {
             dob: dateOfBirth,
         });
 
-        return NextResponse.json({ message: "User registered successfully." }, { status: 201 });
+        // Generate OTP and send email after successful registration
+        const newOtp = generateOtp();
+        console.log(`REGISTER API: Generated OTP ${newOtp} for ${email}`);
+
+        if (!process.env.EMAIL_USER || !process.env.EMAIL_PASS) {
+            console.error("REGISTER API: Email credentials are missing in environment variables.");
+        } else {
+            console.log("REGISTER API: Email credentials found.");
+        }
+
+        const sent = await sendOtpEmail(email, newOtp);
+        if (sent) {
+            console.log(`REGISTER API: Successfully sent OTP email to ${email}.`);
+        } else {
+            console.error(`REGISTER API: Failed to send OTP email to ${email}.`);
+        }
+
+        return NextResponse.json({ message: "User registered successfully. OTP sent to email." }, { status: 201 });
 
     } catch (error: unknown) {
         console.error("Register API: Error during registration:", error);

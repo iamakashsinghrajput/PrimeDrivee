@@ -1,15 +1,11 @@
-// src/data/trendingData.ts (Create this new file)
-
 import { StaticImageData } from 'next/image';
-
-// --- Types ---
 export interface TrendingCarInfo {
-    id: number; // Use the ID from your main car data
+    id: number;
     model: string;
     brand: string;
     image: StaticImageData;
-    highlight?: string; // Short highlight text
-    pricePerDay: number; // For display
+    highlight?: string;
+    pricePerDay: number;
 }
 
 export interface TrendingOffer {
@@ -34,7 +30,6 @@ import taisorImg from '@/assets/images/edited/image_063.png';
 import tharImg from '@/assets/images/edited/image_062.png';
 import { Tag, CalendarDays, MapPin } from 'lucide-react';
 
-// --- Sample Data ---
 
 export const trendingCarsData: TrendingCarInfo[] = [
     { id: 2, model: 'Thar', brand: 'Mahindra', image: tharImg, highlight: 'Adventure Ready!', pricePerDay: 5500 },

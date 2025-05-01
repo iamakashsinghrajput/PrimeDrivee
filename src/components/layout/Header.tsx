@@ -77,6 +77,7 @@ const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar }) => {
                 Good to see you, {userName}!
               </h1>
            </div>
+
            <div className="flex flex-shrink-0 items-center space-x-2 sm:space-x-3 md:space-x-5 ml-4">
                  <form onSubmit={handleSearchSubmit} className="relative hidden sm:block">
                     <label htmlFor="dashboard-search" className="sr-only">Search anything</label>
@@ -89,12 +90,14 @@ const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar }) => {
                         <Search className="h-4 w-4 text-gray-400" />
                     </div>
                  </form>
+
                  <button
                     className="p-1.5 rounded-full text-gray-400 hover:text-gray-100 hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#181818] focus:ring-orange-500"
                     aria-label="View notifications"
                  >
                     <Bell className="h-5 w-5" />
                  </button>
+
                  <div className="relative">
                     <motion.button
                         ref={userMenuTriggerRef} whileTap={{ scale: 0.95 }}
@@ -113,11 +116,12 @@ const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar }) => {
                         {session && ( <> <span className="hidden lg:inline-block ml-2 text-sm font-medium text-gray-300">{userName}</span> <ChevronDown className="hidden lg:inline-block ml-1 h-4 w-4 text-gray-400"/> </> )}
                         {!session && ( <> <span className="hidden lg:inline-block ml-2 text-sm font-medium text-gray-400">Guest</span> <ChevronDown className="hidden lg:inline-block ml-1 h-4 w-4 text-gray-400"/> </> )}
                     </motion.button>
+
                     <AnimatePresence>
                         {isUserMenuOpen && (
                         <motion.div
                             ref={userMenuRef} variants={dropdownVariants} initial="hidden" animate="visible" exit="exit"
-                            className="absolute right-0 mt-2 w-48 origin-top-right bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-700 z-40"
+                            className="absolute right-0 mt-2 w-48 origin-top-right bg-gray-800 rounded-md shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none border border-gray-700 z-40" // Ensure z-index is high
                             role="menu" aria-orientation="vertical" aria-labelledby="user-menu-button"
                         >
                             <div className="py-1" role="none">
@@ -131,7 +135,8 @@ const Header: React.FC<HeaderProps> = ({ onToggleMobileSidebar }) => {
                                 <button onClick={() => { signOut({ callbackUrl: '/' }); closeUserMenu(); }} className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-orange-400 transition-colors duration-150" role="menuitem" > <LogOut className="mr-2 h-4 w-4" /> Logout </button>
                                 </>
                             ) : (
-                                <Link href="/api/auth/signin" className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-orange-400 transition-colors duration-150" role="menuitem" onClick={closeUserMenu} > <User className="mr-2 h-4 w-4" /> Login </Link>
+                                <Link href="/login"
+                                      className="flex items-center w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700 hover:text-orange-400 transition-colors duration-150" role="menuitem" onClick={closeUserMenu} > <User className="mr-2 h-4 w-4" /> Login </Link>
                             )}
                             </div>
                         </motion.div>

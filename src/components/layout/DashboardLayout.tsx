@@ -26,7 +26,8 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
 
   useEffect(() => {
     closeMobileSidebar();
-  }, [closeMobileSidebar, pathname]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [pathname]);
 
   useEffect(() => {
     if (isMobileSidebarOpen) {
@@ -40,7 +41,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
   }, [isMobileSidebarOpen]);
 
   return (
-    <div className="min-h-screen flex bg-[#181818]">
+    <div className="relative min-h-screen flex bg-[#181818]">
       <Sidebar
         isMobileOpen={isMobileSidebarOpen}
         onClose={closeMobileSidebar}
@@ -49,6 +50,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
       <AnimatePresence>
         {isMobileSidebarOpen && (
           <motion.div
+            key="sidebar-overlay"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -60,7 +62,7 @@ const DashboardLayout: React.FC<DashboardLayoutProps> = ({ children }) => {
         )}
       </AnimatePresence>
 
-      <div className="flex flex-col flex-1 md:ml-64">
+      <div className="flex flex-col flex-1 transition-all duration-300 ease-in-out md:ml-64">
         <Header onToggleMobileSidebar={toggleMobileSidebar} />
         <main className="flex-1">
           {children}

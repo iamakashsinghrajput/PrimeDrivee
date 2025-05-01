@@ -1,13 +1,10 @@
-// src/app/rent/confirmation/ConfirmationDetails.tsx
-
-"use client"; // <-- Mark as a Client Component
+"use client";
 
 import React, { useEffect, useState } from 'react';
-import { useSearchParams } from 'next/navigation'; // This hook is now safe to use here
+import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { Loader2, CheckCircle, AlertTriangle } from 'lucide-react';
 
-// Define expected structure for booking data (if you fetch it)
 interface FetchedBookingData {
   id: string;
   carModel?: string;
@@ -16,15 +13,14 @@ interface FetchedBookingData {
   endDate?: string;
   totalPrice?: number;
   status?: string;
-  // Add other relevant fields from your API response
 }
 
 export default function ConfirmationDetails() {
   const searchParams = useSearchParams();
   const bookingId = searchParams.get('bookingId');
-  const statusParam = searchParams.get('status'); // e.g., 'success' or 'failed'
+  const statusParam = searchParams.get('status');
 
-  const [isLoading, setIsLoading] = useState(true); // Initially true if fetching data
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [bookingDetails, setBookingDetails] = useState<FetchedBookingData | null>(null);
 
@@ -52,17 +48,16 @@ export default function ConfirmationDetails() {
         // setBookingDetails(data);
 
         // --- Mock Data Example (Remove when using real API) ---
-        await new Promise(resolve => setTimeout(resolve, 500)); // Simulate network delay
+        await new Promise(resolve => setTimeout(resolve, 500));
         if (bookingId === 'error-example') {
             throw new Error("Simulated fetch error.");
         }
-        setBookingDetails({ // Mock successful fetch
+        setBookingDetails({
              id: bookingId,
              carBrand: "Porsche",
              carModel: "Taycan",
-             status: statusParam === 'success' ? 'Confirmed' : 'Pending' // Use statusParam
+             status: statusParam === 'success' ? 'Confirmed' : 'Pending'
         });
-        // --- End Mock Data ---
 
       } catch (err: unknown) {
         setError(err instanceof Error ? err.message : "Failed to load booking details.");
@@ -72,10 +67,6 @@ export default function ConfirmationDetails() {
     };
 
     fetchDetails();
-    // --- End Placeholder ---
-
-    // If no fetch is needed, just set loading to false
-    // setIsLoading(false);
 
   }, [bookingId, statusParam]);
 
@@ -101,7 +92,6 @@ export default function ConfirmationDetails() {
      );
   }
 
-  // Determine success based on status param or fetched details
   const isSuccess = statusParam === 'success' || bookingDetails?.status?.toLowerCase() === 'confirmed';
 
   return (
@@ -117,7 +107,6 @@ export default function ConfirmationDetails() {
               <div className="text-left bg-gray-50 p-4 rounded-lg border border-gray-100 mb-6 text-sm space-y-2">
                  <p><strong>Booking ID:</strong> <span className="font-mono">{bookingDetails.id}</span></p>
                  {bookingDetails.carBrand && bookingDetails.carModel && <p><strong>Car:</strong> {bookingDetails.carBrand} {bookingDetails.carModel}</p>}
-                 {/* Add more details like dates, price here */}
               </div>
             )}
             <p className="text-sm text-gray-500 mb-6">A confirmation email has been sent to your address.</p>
@@ -132,7 +121,6 @@ export default function ConfirmationDetails() {
            {bookingDetails && bookingDetails.id && (
               <div className="text-left bg-yellow-50 p-4 rounded-lg border border-yellow-100 mb-6 text-sm space-y-2">
                  <p><strong>Booking ID:</strong> <span className="font-mono">{bookingDetails.id}</span></p>
-                 {/* Add details */}
               </div>
             )}
            <p className="text-sm text-gray-500 mb-6">If this status is unexpected, please contact support.</p>

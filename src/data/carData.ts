@@ -310,9 +310,9 @@ export const allCarsDetailData: CarDetail[] = [
     },
 
     {
-        id: 7, // Assign a NEW unique ID
+        id: 7,
         image: dzireImg,
-        imageGallery: { // Gallery images
+        imageGallery: {
             front: dzireInt,
             left: dzireLeft,
             right: dzireRight,

@@ -33,11 +33,15 @@ const NavLink: React.FC<NavLinkProps> = ({ href, label, icon: Icon, onClick }) =
       className={clsx(
         "flex items-center px-4 py-3 text-sm font-medium rounded-md transition-colors duration-150 group",
         isActive
-          ? "bg-orange-500 text-white"
+          ? "bg-orange-500 text-white" 
           : "text-gray-400 hover:bg-gray-700 hover:text-gray-200"
       )}
+      aria-current={isActive ? 'page' : undefined}
     >
-      <Icon className={clsx("mr-3 h-5 w-5 flex-shrink-0", isActive ? "text-white" : "text-gray-500 group-hover:text-gray-300 transition-colors duration-150")} />
+      <Icon className={clsx(
+          "mr-3 h-5 w-5 flex-shrink-0 transition-colors duration-150",
+          isActive ? "text-white" : "text-gray-500 group-hover:text-gray-300"
+      )} />
       <span className="flex-grow">{label}</span>
     </Link>
   );
@@ -72,11 +76,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onClose }) => {
   const SidebarContent = () => (
      <div className="flex flex-col h-full bg-[#111111] overflow-y-auto border-r border-gray-700/50">
         <div className="flex items-center justify-between flex-shrink-0 h-16 px-4 border-b border-gray-700/50 md:justify-start">
-            <div className="flex items-center"><Logo /></div>
-            <button onClick={onClose} className="md:hidden text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500 -ml-3 rounded" aria-label="Close sidebar" type="button">
-                <X className="h-6 w-6" />
+            <div className="flex items-center">
+                <Logo />
+            </div>
+            <button
+                onClick={onClose}
+                className="md:hidden text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-inset focus:ring-orange-500 rounded"
+                aria-label="Close sidebar"
+                type="button"
+            >
+                <X className="h-6 w-6 -ml-2" />
             </button>
         </div>
+
         <nav className="mt-5 flex-1 px-2 space-y-1 pb-4">
           <p className="px-4 text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">Main Menu</p>
           {mainNavLinks.map((link) => (
@@ -98,11 +110,19 @@ const Sidebar: React.FC<SidebarProps> = ({ isMobileOpen, onClose }) => {
       <div className="hidden md:flex md:flex-col md:fixed md:inset-y-0 md:w-64 z-30">
         <SidebarContent />
       </div>
+
       <AnimatePresence>
         {isMobileOpen && (
-          <motion.div key="mobile-sidebar" variants={sidebarVariants} initial="hidden" animate="visible" exit="exit"
+          <motion.div
+            key="mobile-sidebar-motion"
+            variants={sidebarVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
             className="fixed inset-y-0 left-0 w-64 z-40 md:hidden"
-            aria-modal="true" role="dialog">
+            aria-modal="true"
+            role="dialog"
+          >
             <SidebarContent />
           </motion.div>
         )}

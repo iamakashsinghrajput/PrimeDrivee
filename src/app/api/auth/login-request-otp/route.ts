@@ -1,10 +1,10 @@
-// src/app/api/auth/resend-otp/route.ts
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import Otp from "@/models/otp";
 import { sendOtpEmail } from "@/lib/nodemailer";
 import crypto from 'crypto';
+import bcrypt from "bcrypt";
 
 const generateOtp = (length: number = 6): string => {
   const otpNum = crypto.randomInt(0, 10**length);
@@ -12,27 +12,41 @@ const generateOtp = (length: number = 6): string => {
 };
 
 export async function POST(request: Request) {
-    const logPrefix = "[Resend OTP API]";
+    const logPrefix = "[API Request OTP]";
     console.log(`${logPrefix} Request received.`);
     try {
         await connectMongoDB();
-        const { email } = await request.json();
+        const { email, password } = await request.json();
 
-        if (!email) {
-            console.log(`${logPrefix} Error: Email is required.`);
-            return NextResponse.json({ message: "Email is required." }, { status: 400 });
+        if (!email || !password) {
+            console.log(`${logPrefix} Error: Email and Password are required.`);
+            return NextResponse.json({ message: "Email and Password are required." }, { status: 400 });
         }
         const normalizedEmail = email.toLowerCase().trim();
-        console.log(`${logPrefix} Processing resend for: ${normalizedEmail}`);
 
+        console.log(`${logPrefix} Searching for user: ${normalizedEmail}`);
         const user = await User.findOne({ email: normalizedEmail });
+
         if (!user) {
-            // SECURITY: Don't reveal if user exists
-            console.log(`${logPrefix} User not found for ${normalizedEmail}. Sending generic success response.`);
-            return NextResponse.json({ message: "If an account exists for this email, a new OTP has been sent." }, { status: 200 });
+            console.log(`${logPrefix} User not found for email: ${normalizedEmail}.`);
+            return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
         }
 
-        console.log(`${logPrefix} User found for ${normalizedEmail}. Generating new OTP.`);
+        if (!user.password) {
+             console.log(`${logPrefix} User ${normalizedEmail} found but has no password set (likely social login).`);
+             return NextResponse.json({ message: "Password login not enabled for this account." }, { status: 403 });
+        }
+
+        console.log(`${logPrefix} Comparing password for user ${user._id}`);
+        const passwordMatch = await bcrypt.compare(password, user.password);
+
+        if (!passwordMatch) {
+            console.log(`${logPrefix} Password mismatch for user ${user._id}`);
+            return NextResponse.json({ message: "Invalid email or password." }, { status: 401 });
+        }
+
+        console.log(`${logPrefix} Credentials valid for ${user._id}. Proceeding with OTP.`);
+
         const newOtp = generateOtp();
         const expiryMinutes = 5;
         const expiresAt = new Date(Date.now() + expiryMinutes * 60 * 1000);
@@ -52,13 +66,12 @@ export async function POST(request: Request) {
             console.log(`${logPrefix} Successfully triggered OTP email to ${normalizedEmail}.`);
         } else {
             console.error(`${logPrefix} Failed to trigger OTP email to ${normalizedEmail}.`);
-            // Consider if this failure should change the response (usually not, email is best-effort)
         }
 
-        return NextResponse.json({ message: "A new OTP has been sent to your email address." }, { status: 200 });
+        return NextResponse.json({ message: "Credentials verified. An OTP has been sent to your email." }, { status: 200 });
 
     } catch (error) {
-        console.error(`${logPrefix} Error processing resend request:`, error);
+        console.error(`${logPrefix} Unhandled exception:`, error);
         return NextResponse.json({ message: "An internal server error occurred." }, { status: 500 });
     }
 }

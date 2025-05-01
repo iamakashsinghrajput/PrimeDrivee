@@ -37,7 +37,7 @@ export default function EditAccountPage() {
 
     useEffect(() => {
         if (status === "authenticated" && session?.user) {
-            const user = session.user as SessionUser;
+            const user = session.user as unknown as SessionUser;
             setName(user.name || "");
             setGender(user.gender || "");
             setMobileNumber(user.mobileNumber || "");
@@ -151,7 +151,7 @@ export default function EditAccountPage() {
         );
     }
 
-    const typedSession = session as CustomSession | null;
+    const typedSession = session as unknown as CustomSession | null;
 
 
     return (
