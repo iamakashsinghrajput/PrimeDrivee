@@ -67,12 +67,11 @@ const OffersAndFeatures: React.FC = () => {
   const goToNextFeature = () => featuresSliderRef.current?.slickNext();
   const goToPrevFeature = () => featuresSliderRef.current?.slickPrev();
 
-  // Correct the type for sliderRef to accept RefObject<Slider | null>
   const renderSection = (
       title: string,
       data: (OfferItem | FeatureItem)[],
       settings: Settings,
-      sliderRef: React.RefObject<Slider | null>, // Updated type here
+      sliderRef: React.RefObject<Slider | null>,
       prevHandler: () => void,
       nextHandler: () => void,
       isOfferSection: boolean = false

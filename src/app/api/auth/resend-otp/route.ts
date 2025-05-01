@@ -1,4 +1,3 @@
-// src/app/api/auth/resend-otp/route.ts
 import { NextResponse } from 'next/server';
 import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
@@ -27,7 +26,6 @@ export async function POST(request: Request) {
 
         const user = await User.findOne({ email: normalizedEmail });
         if (!user) {
-            // SECURITY: Don't reveal if user exists
             console.log(`${logPrefix} User not found for ${normalizedEmail}. Sending generic success response.`);
             return NextResponse.json({ message: "If an account exists for this email, a new OTP has been sent." }, { status: 200 });
         }
@@ -52,7 +50,6 @@ export async function POST(request: Request) {
             console.log(`${logPrefix} Successfully triggered OTP email to ${normalizedEmail}.`);
         } else {
             console.error(`${logPrefix} Failed to trigger OTP email to ${normalizedEmail}.`);
-            // Consider if this failure should change the response (usually not, email is best-effort)
         }
 
         return NextResponse.json({ message: "A new OTP has been sent to your email address." }, { status: 200 });

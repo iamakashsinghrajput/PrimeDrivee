@@ -503,7 +503,6 @@ const DateTimeSelectionView: React.FC<DateTimeSelectionViewProps> = ({ initialDa
              if (currentEndDate && !isBefore(newTimeDate, currentEndDate)) {
                  setLocalError("Start time must be before the return time.");
              } else {
-                // Ensure the entire DateRange object is returned
                 setTempRange(prev => ({ from: newTimeDate, to: prev?.to }));
              }
          } else {
@@ -511,7 +510,6 @@ const DateTimeSelectionView: React.FC<DateTimeSelectionViewProps> = ({ initialDa
              if (currentStartDate && !isBefore(currentStartDate, newTimeDate)) {
                  setLocalError("Return time must be after the start time.");
              } else {
-                // Ensure the entire DateRange object is returned
                 setTempRange(prev => ({ from: prev?.from, to: newTimeDate }));
              }
          }

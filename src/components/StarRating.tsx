@@ -11,7 +11,7 @@ interface StarRatingProps {
 const StarRating: React.FC<StarRatingProps> = ({
     rating,
     maxRating = 5,
-    size = 16, // Default size
+    size = 16,
     className = ''
 }) => {
     const fullStars = Math.floor(rating);
