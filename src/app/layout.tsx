@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Poppins, Squada_One } from "next/font/google";
 import "./globals.css";
 import Providers from "./providers";
+import { Analytics } from "@vercel/analytics/react"
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const poppins = Poppins({
@@ -31,6 +32,7 @@ export default function RootLayout({
         className={`${inter.variable} ${poppins.variable} ${squadaone.variable} font-poppins bg-gray-100 antialiased`}
       >
         <Providers>{children}</Providers>
+        <Analytics/>
       </body>
     </html>
   );
