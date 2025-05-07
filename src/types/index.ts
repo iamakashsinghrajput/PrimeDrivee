@@ -1,6 +1,5 @@
 import { StaticImageData } from 'next/image';
 import React from 'react';
-
 export interface CarDetail {
     id: number;
     image: StaticImageData;
@@ -38,10 +37,10 @@ export interface CarSummary {
 }
 
 export interface CarInfo {
-    id: number;
-    brand: string;
-    model: string;
-    image: StaticImageData | string;
+  id: number;
+  brand: string;
+  model: string;
+  image: StaticImageData | string;
 }
 
 export interface OfferItem {
@@ -62,21 +61,6 @@ export interface FeatureItem {
   iconColorClass?: string;
 }
 
-export interface Booking {
-  id: string;
-  userId: string;
-  carId: number;
-  startDate: string;
-  endDate: string;
-  totalPrice?: number;
-  status: 'Confirmed' | 'Ongoing' | 'Completed' | 'Cancelled' | 'Pending';
-  createdAt: string;
-}
-
-export interface BookingDisplayItem extends Omit<Booking, 'carId' | 'userId'>{
-  car: CarInfo | null;
-}
-
 export interface TopSellingCar {
     id: number;
     image: string;
@@ -84,4 +68,63 @@ export interface TopSellingCar {
     brand: string;
     pricePerDay: number;
     rating?: number;
+}
+
+
+
+export interface IBookingFromAPI {
+  _id: string;
+  user: string;
+  carId: number;
+  carModel: string;
+  carBrand: string;
+  pricePerDay: number;
+  totalPrice?: number;
+  startDate: string;
+  endDate: string;
+  deliveryAddress: {
+      addressLine1: string;
+      addressLine2?: string;
+      city: string;
+      postalCode: string;
+  };
+  userPhoneNumber: string;
+  paymentMethod: 'card' | 'upi' | 'netbanking';
+  paymentDetails?: {
+      provider?: string;
+      orderId?: string;
+      paymentId?: string;
+      status?: string;
+      receipt?: string;
+      error?: string | null;
+      amountPaid?: number;
+      currency?: string;
+      capturedAt?: string;
+      upiVpaAttempted?: string;
+  };
+  status: 'PendingPayment' | 'Confirmed' | 'CancelledBySystem' | 'CancelledByUser' | 'Ongoing' | 'Completed' | 'PaymentFailed';
+  createdAt: string;
+  updatedAt: string;
+}
+
+
+
+export interface BookingDisplayItem {
+    id: string;
+    userId: string;
+    carId: number;
+    carModel: string;
+    carBrand: string;
+    pricePerDay: number;
+    totalPrice?: number;
+    startDate: string;
+    endDate: string;
+    deliveryAddress: IBookingFromAPI['deliveryAddress'];
+    userPhoneNumber: string;
+    paymentMethod: IBookingFromAPI['paymentMethod'];
+    paymentDetails?: IBookingFromAPI['paymentDetails'];
+    status: IBookingFromAPI['status'];
+    createdAt: string;
+    updatedAt: string;
+    car: CarInfo | null;
 }

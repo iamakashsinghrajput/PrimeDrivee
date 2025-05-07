@@ -6,7 +6,7 @@ import crypto from 'crypto';
 const RAZORPAY_WEBHOOK_SECRET = process.env.RAZORPAY_WEBHOOK_SECRET;
 
 if (!RAZORPAY_WEBHOOK_SECRET) {
-    console.error("FATAL ERROR: Razorpay Webhook Secret not configured in environment variables.");
+    console.error("FATAL ERROR: Razorpay Webhook Secret not configured.");
 }
 
 export async function POST(request: Request) {
@@ -14,7 +14,7 @@ export async function POST(request: Request) {
     console.log(`${logPrefix} Received request.`);
 
     if (!RAZORPAY_WEBHOOK_SECRET) {
-        console.error(`${logPrefix} Webhook secret not available. Cannot process webhook.`);
+        console.error(`${logPrefix} Webhook secret not available.`);
         return NextResponse.json({ message: "Webhook misconfiguration" }, { status: 500 });
     }
 
@@ -44,27 +44,30 @@ export async function POST(request: Request) {
             const paymentEntity = eventPayload.payload.payment.entity;
             const orderId = paymentEntity.order_id;
             const razorpayPaymentId = paymentEntity.id;
+            const amountPaid = paymentEntity.amount;
+            const currency = paymentEntity.currency;
+
             console.log(`${logPrefix} Event: payment.captured for Order ID: ${orderId}`);
 
             await connectMongoDB();
             const booking = await Booking.findOne({ 'paymentDetails.orderId': orderId });
 
             if (!booking) {
-                console.warn(`${logPrefix} Booking not found for RZP Order ID: ${orderId}.`);
+                console.warn(`${logPrefix} Booking not found for RZP Order ID: ${orderId}. Acknowledging event.`);
                 return NextResponse.json({ message: "Booking not found, event acknowledged." }, { status: 200 });
             }
             if (booking.status === 'Confirmed') {
-                 console.log(`${logPrefix} Booking ${booking._id} already confirmed.`);
+                 console.log(`${logPrefix} Booking ${booking._id} already confirmed for order ${orderId}.`);
                  return NextResponse.json({ message: "Already confirmed" }, { status: 200 });
             }
 
             booking.status = 'Confirmed';
             booking.paymentDetails = {
-                ...booking.paymentDetails,
+                ...(booking.paymentDetails || {}),
                 paymentId: razorpayPaymentId,
                 status: 'captured',
-                amountPaid: paymentEntity.amount / 100,
-                currency: paymentEntity.currency,
+                amountPaid: amountPaid / 100,
+                currency: currency,
                 capturedAt: new Date(paymentEntity.created_at * 1000),
                 error: null,
             };
@@ -80,7 +83,11 @@ export async function POST(request: Request) {
             const booking = await Booking.findOne({ 'paymentDetails.orderId': orderId });
             if (booking && booking.status !== 'Confirmed') {
                 booking.status = 'PaymentFailed';
-                booking.paymentDetails = { ...booking.paymentDetails, status: 'failed', error: failureReason || 'Payment failed' };
+                booking.paymentDetails = {
+                     ...(booking.paymentDetails || {}),
+                     status: 'failed',
+                     error: failureReason || 'Payment failed at gateway.'
+                };
                 await booking.save();
                 console.log(`${logPrefix} Booking ${booking._id} status updated to PaymentFailed.`);
             }

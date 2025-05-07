@@ -1,4 +1,3 @@
-// src/app/login/login-form.tsx
 "use client";
 
 import React, { useState, useEffect } from 'react';
@@ -7,7 +6,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { FaGoogle } from 'react-icons/fa';
 import { motion } from 'framer-motion';
-import NavbarSplitTheme from "@/components/Navbar"; // Assuming this component exists
+import NavbarSplitTheme from "@/components/Navbar";
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
@@ -99,24 +98,18 @@ export default function LoginForm() {
          } else {
              setError('An unknown error occurred during the final login step.'); setSuccess(null);
          }
-     // --- CORRECTED CATCH BLOCK ---
-     } catch (err: unknown) { // Use 'unknown' (or 'any', or omit type)
+     } catch (err: unknown) { 
          let message = 'An unexpected error occurred during verification.';
-         // Type check before accessing .message
          if (err instanceof Error) {
-             // Use the specific error message if available, otherwise keep the generic one
              message = err.message || message;
          } else if (typeof err === 'string') {
-             // Handle cases where a string might be thrown
              message = err;
          }
-         // Set error only if not already set by other logic in the try block
          if (!error && !success) {
              setError(message);
          }
-         console.error('[Client] handleOtpSubmit: Client-side error:', err); // Log the original caught error
-         setSuccess(null); // Clear success message on error
-     // --- END CORRECTED CATCH BLOCK ---
+         console.error('[Client] handleOtpSubmit: Client-side error:', err);
+         setSuccess(null);
      } finally {
          if (!signInResult?.ok || error) { setIsLoading(false); }
      }
@@ -155,7 +148,6 @@ export default function LoginForm() {
   };
 
 
-  // JSX (Keep your original structure)
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-orange-500 to-red-600 pt-20 pb-10 px-4">
       <NavbarSplitTheme/>

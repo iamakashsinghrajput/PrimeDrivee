@@ -3,7 +3,7 @@ import { connectMongoDB } from "@/lib/mongodb";
 import User from "@/models/user";
 import bcrypt from "bcrypt";
 import mongoose from 'mongoose';
-import { sendOtpEmail } from "@/lib/nodemailer"; // Import sendOtpEmail for OTP email sending
+import { sendOtpEmail } from "@/lib/nodemailer";
 
 const generateOtp = (length: number = 6): string => {
   return Math.floor(Math.random() * (10**length - 10**(length-1)) + 10**(length-1)).toString();
@@ -54,7 +54,6 @@ export async function POST(request: Request) {
             dob: dateOfBirth,
         });
 
-        // Generate OTP and send email after successful registration
         const newOtp = generateOtp();
         console.log(`REGISTER API: Generated OTP ${newOtp} for ${email}`);
 
