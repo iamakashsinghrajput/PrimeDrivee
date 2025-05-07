@@ -28,7 +28,6 @@ export default function ResetPasswordPage() {
             setIsLoading(true);
             try {
                  setIsValidToken(true);
-                // Placeholder for actual token verification logic
                 // const response = await fetch('/api/auth/verify-reset-token', {
                 //     method: 'POST',
                 //     headers: { 'Content-Type': 'application/json' },
