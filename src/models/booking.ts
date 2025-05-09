@@ -69,7 +69,7 @@ const BookingSchema: Schema<IBooking> = new Schema({
     status: {
         type: String, required: true,
         enum: { values: ['PendingPayment', 'Confirmed', 'CancelledBySystem', 'CancelledByUser', 'Ongoing', 'Completed', 'PaymentFailed'], message: 'Booking status {VALUE} is not supported.' },
-        default: 'PendingPayment', index: true,
+        default: 'Confirmed', index: true,
     },
 }, { timestamps: true });
 
