@@ -201,7 +201,7 @@ export const allCarsDetailData: CarDetail[] = [
         bodyType: 'Hatchback',
         transmission: 'Automatic',
         seats: 5,
-        pricePerDay: 150.70,
+        pricePerDay: 150,
         engine: "1.0L K10C Petrol",
         mileage: "24.90 kmpl (AGS)",
         fuelType: 'Petrol',
